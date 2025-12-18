@@ -2,12 +2,18 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 
-const API_URL = "http://127.0.0.1:8000"; 
+const API_URL = "http://127.0.0.1:8000";
 
 function ChatUI() {
   const [input, setInput] = useState("");
-  const [selectedVendor, setSelectedVendor] = useState(null);
-  const [vendors, setVendors] = useState([]);
+
+  const [drivers, setDrivers] = useState([]);
+
+  const [restaurants, setRestaurants] = useState([]);
+
+  const [artworks, setArtworks] = useState([]);
+  const [selectedVendors, setSelectedVendors] = useState([]);
+
   const [messages, setMessages] = useState([
     { role: "bot", text: "Hello! How can I help you plan your trip today?" },
   ]);
@@ -17,7 +23,7 @@ function ChatUI() {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, vendors]);
+  }, [messages, drivers, artworks, restaurants]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -57,8 +63,20 @@ function ChatUI() {
   const handleYes = async () => {
     try {
       const response = await axios.get(`${API_URL}/vendors?vendor_type=Driver`);
-      const vendorList = response?.data || [];
-      setVendors(vendorList);
+      const driverList = response?.data || [];
+      setDrivers(driverList);
+
+      const response1 = await axios.get(
+        `${API_URL}/vendors?vendor_type=Restaurant`
+      );
+      const restaurantList = response1?.data || [];
+      setRestaurants(restaurantList);
+
+      const response2 = await axios.get(
+        `${API_URL}/vendors?vendor_type=Artwork/Craftwork`
+      );
+      const artworkList = response2?.data || [];
+      setArtworks(artworkList);
       setShowVendorCards(true);
       setMessages((prev) => [
         ...prev,
@@ -78,47 +96,34 @@ function ChatUI() {
     }
   };
 
-  const handleNo = () => {
-    setShowItineraryOptions(false);
-    setShowVendorCards(false);
-    setMessages((prev) => [
-      ...prev,
-      { role: "bot", text: "Alright! Let me know how else I can help." },
-    ]);
+  const handleVendorSelect = (vendor) => {
+    // Only add if not already selected
+    if (!selectedVendors.find((v) => v._id === vendor._id)) {
+      setSelectedVendors([...selectedVendors, vendor]);
+    }
   };
 
-  const handleVendorSelect = (vendor) => {
-    setSelectedVendor(vendor);
-    setMessages((prev) => [
-      ...prev,
-      {
-        role: "bot",
-        text: `You selected: ${vendor.business_name} from ${vendor.city}`,
-      },
-    ]);
-    setShowVendorCards(false); // Optionally hide cards after selection
+  const handleNo = () => {
+    window.location.reload();
   };
 
   return (
     <div className="flex flex-col min-h-svh w-full bg-transparent">
-<div
-  className="fixed top-0 left-0 w-full -z-10 "
-  style={{
-    minHeight: "100%",
-    height: "100%",
-    backgroundColor: "#e4c59e",
-    backgroundImage: `
+      <div
+        className="fixed top-0 left-0 w-full -z-10 "
+        style={{
+          minHeight: "100%",
+          height: "100%",
+          backgroundColor: "#e4c59e",
+          backgroundImage: `
       radial-gradient(at 42% 42%, #e4c59e 0%, transparent 60%),
       radial-gradient(at 97% 51%, #af8260 0%, transparent 50%),
       radial-gradient(at 90% 76%, #803d3b 0%, transparent 40%),
       radial-gradient(at 38% 26%, #322c2b 0%, transparent 30%)
     `,
-    backgroundSize: "cover",
-
-
-    
-  }}
-/>
+          backgroundSize: "cover",
+        }}
+      />
 
       <div className="flex-1 overflow-y-auto px-4 md:px-20 lg:px-40 xl:px-96 pt-4">
         {messages.map((msg, index) => (
@@ -158,34 +163,104 @@ function ChatUI() {
           </div>
         )}
 
-        {showVendorCards && vendors.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-6 px-4">
-            {vendors.map((vendor) => (
-              <div
-                key={vendor.id || vendor._id}
-                onClick={() => handleVendorSelect(vendor)}
-                className="cursor-pointer p-4 rounded-xl shadow-md bg-white hover:bg-gray-200 border border-gray-200 transition"
-              >
-                <h2 className="text-lg font-semibold">
-                  {vendor.business_name}
-                </h2>
-                <p className="text-sm text-gray-500">{vendor.vendor_type}</p>
-                <p className="text-sm text-gray-600">{vendor.city}</p>
-                <p className="text-sm mt-1 text-gray-700 italic">
-                  {vendor.summary}
-                </p>
+        {showVendorCards && (
+          <>
+            <div>
+              <h3>Drivers</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-6 px-4">
+                {drivers.map((vendor) => (
+                  <div
+                    key={vendor.id || vendor._id}
+                    onClick={() => handleVendorSelect(vendor)}
+                    className="cursor-pointer p-4 rounded-xl shadow-md bg-white hover:bg-gray-200 border border-gray-200 transition active:bg-blue-50 active:text-blue-900 active:border active:border-blue-300"
+                  >
+                    <h2 className="text-lg font-semibold">
+                      {vendor.business_name}
+                    </h2>
+                    <p className="text-sm text-gray-500">
+                      {vendor.contact_name}
+                    </p>
+                    <p className="text-sm text-gray-600">{vendor.city}</p>
+                    <p className="text-sm mt-1 text-gray-700 italic">
+                      {vendor.summary}
+                    </p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+            <div>
+              <h3>Restaurants</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-6 px-4 ">
+                {restaurants.map((vendor) => (
+                  <div
+                    key={vendor.id || vendor._id}
+                    onClick={() => handleVendorSelect(vendor)}
+                    className="cursor-pointer p-4 rounded-xl shadow-md bg-white hover:bg-gray-200 border border-gray-200 transition "
+                  >
+                    <h2 className="text-lg font-semibold">
+                      {vendor.business_name}
+                    </h2>
+                    <p className="text-sm text-gray-500">
+                      {vendor.contact_name}
+                    </p>
+                    <p className="text-sm text-gray-600">{vendor.city}</p>
+                    <p className="text-sm mt-1 text-gray-700 italic">
+                      {vendor.summary}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h3>Artworkers</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-6 px-4">
+                {artworks.map((vendor) => (
+                  <div
+                    key={vendor.id || vendor._id}
+                    onClick={() => handleVendorSelect(vendor)}
+                    className="cursor-pointer p-4 rounded-xl shadow-md bg-white hover:bg-gray-200 border border-gray-200 transition"
+                  >
+                    <h2 className="text-lg font-semibold">
+                      {vendor.business_name}
+                    </h2>
+                    <p className="text-sm text-gray-500">
+                      {vendor.contact_name}
+                    </p>
+                    <p className="text-sm text-gray-600">{vendor.city}</p>
+                    <p className="text-sm mt-1 text-gray-700 italic">
+                      {vendor.summary}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
         )}
 
-        {selectedVendor && (
-          <div className="my-4 p-4 rounded-xl bg-blue-50 text-blue-900 border border-blue-300">
-            <h3 className="font-bold">Selected Vendor:</h3>
-            <p>
-              {selectedVendor.business_name} ({selectedVendor.vendor_type}) -{" "}
-              {selectedVendor.city}
-            </p>
+        {selectedVendors.length > 0 && (
+          <div className="my-4 flex flex-wrap gap-4">
+            {selectedVendors.map((vendor) => (
+              <div
+                key={vendor._id}
+                className="p-4 rounded-xl bg-blue-50 text-blue-900 border border-blue-300 shadow w-64"
+              >
+                <h3 className="font-bold">{vendor.business_name}</h3>
+                <p className="text-sm">
+                  {vendor.vendor_type} - {vendor.city}
+                </p>
+                <p className="text-xs mt-1">{vendor.summary}</p>
+                <button
+                  onClick={() =>
+                    setSelectedVendors((prev) =>
+                      prev.filter((v) => v._id !== vendor._id)
+                    )
+                  }
+                  className="mt-2 text-red-600 text-xs underline"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
           </div>
         )}
 
