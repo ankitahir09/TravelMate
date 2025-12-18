@@ -34,7 +34,7 @@ if not os.getenv("GOOGLE_API_KEY"):
     raise ValueError("GOOGLE_API_KEY is missing from your .env file.")
 
 # Initialize the Language Model
-llm = ChatGoogleGenerativeAI(model="models/gemini-1.5-flash-latest", temperature=0.2)
+llm = ChatGoogleGenerativeAI(model="models/gemini-1.5-flash", temperature=0.2)
 
 
 # --- 2. LANGGRAPH STATE DEFINITION ---
