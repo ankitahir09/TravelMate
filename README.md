@@ -14,6 +14,7 @@ Chat Page:
 
 
 Add Vendor Page:
+
 ![Picture7](https://github.com/user-attachments/assets/6ef226f3-0091-46dc-94a4-ecfec1b1727d)
 
 
