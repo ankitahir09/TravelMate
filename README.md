@@ -2,6 +2,25 @@
 
 TravelMate is an AI-powered travel planning application that helps users create personalized trip itineraries and connect with local vendors. The app features a conversational AI interface built with LangGraph and Google's Gemini model, a modern React frontend, and a FastAPI backend with MongoDB integration.
 
+## Screenshots: 
+Landing Page:
+![Picture1](https://github.com/user-attachments/assets/301b4496-d402-45cb-8922-8c0cfb5a5d03)
+
+
+Chat Page:
+![Picture2](https://github.com/user-attachments/assets/76a3507e-89ba-496a-9e3c-b99ccc1e1281)
+![Picture3](https://github.com/user-attachments/assets/07e6318e-80a6-423b-a226-152e949c93e3)
+![Picture4](https://github.com/user-attachments/assets/f926c7c8-12e8-4bac-ab72-c387cdd0a320)
+
+
+Add Vendor Page:
+![Picture7](https://github.com/user-attachments/assets/6ef226f3-0091-46dc-94a4-ecfec1b1727d)
+
+
+Code Snippet:
+![Picture5](https://github.com/user-attachments/assets/5cb18a61-395e-4a02-9aa9-fbd6fc0a4760)
+![Picture6](https://github.com/user-attachments/assets/0f885f21-2cd8-4ad6-9e21-b8b559d904e5)
+
 ## Features
 
 - **AI-Powered Trip Planning**: Interactive chat interface using LangGraph and Gemini AI to generate customized itineraries based on destination, duration, and interests.
@@ -133,4 +152,3 @@ This project is licensed under the terms specified in the LICENSE file.
 - Built with LangGraph for AI agent orchestration
 - Powered by Google's Gemini AI model
 - UI styled with Tailwind CSS</content>
-<parameter name="filePath">c:\PRACTICALS\IBM SkillsBuild\TravelMate\README.md
